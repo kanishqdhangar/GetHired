@@ -6,8 +6,8 @@ load_dotenv()
 
 def fetch_top_k_jobs(resume_embedding, top_k=5):
     """
-    Fetch top-K similar jobs from the 'jobs' table using pgvector similarity.
-    Assumes table columns: job_id, title, skills, about, requirements, embedding.
+    Fetch top-K similar jobs from the 'internships' table using pgvector similarity.
+    Assumes table columns: id, title, required_skills, description, embedding.
     Returns a list of dicts.
     """
 
@@ -20,13 +20,13 @@ def fetch_top_k_jobs(resume_embedding, top_k=5):
 
     query = """
         SELECT 
-            job_id,
+            id,
             title,
-            skills,
-            about,
-            requirements,
+            required_skills,
+            description,
+            
             embedding <-> CAST(%s AS vector) AS distance
-        FROM jobs
+        FROM internships
         ORDER BY embedding <-> CAST(%s AS vector)
         LIMIT %s;
     """

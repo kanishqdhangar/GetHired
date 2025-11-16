@@ -112,3 +112,26 @@ def create_embedding_from_skills(skills: list) -> list:
 def get_last_embedding_provider() -> str:
     """Return the name of the last embedding provider used."""
     return LAST_EMBEDDING_PROVIDER or "unknown"
+
+
+try:
+    MODEL = SentenceTransformer('all-MiniLM-L6-v2')
+except Exception as e:
+    # Fallback/error handling for model loading
+    print(f"ERROR: Could not load SentenceTransformer model. Recommendations will fail. {e}")
+    MODEL = None
+
+
+def create_embedding_from_text(text: str) -> list:
+    """
+    Generates a vector embedding from text using the Sentence Transformer model.
+    """
+    if MODEL is None:
+        # Return a zero vector or raise an error if the model failed to load
+        # We return a placeholder vector of dimension 384 (standard for MiniLM-L6-v2)
+        print("WARNING: ML model not loaded, returning placeholder vector.")
+        return list(np.zeros(384)) 
+        
+    # Encode the text and convert the resulting NumPy array to a standard Python list
+    embedding_array = MODEL.encode(text)
+    return embedding_array.tolist()

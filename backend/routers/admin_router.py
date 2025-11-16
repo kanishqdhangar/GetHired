@@ -3,12 +3,12 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 # Import the Pydantic schema and database dependency
-from ..schemas.job import JobCreate
-from ..ml_pipeline.db_connector import get_db # Assuming this gets the DB session
+from schemas.job import JobCreate
+from ml_pipeline.db_connector import get_db # Assuming this gets the DB session
 # Import the new service function
-from ..crud.job import create_job_with_embedding 
-from ..security.auth import get_current_recruiter
-from ..ml_pipeline.models import User
+from crud.job import create_job_with_embedding 
+from security.auth import get_current_recruiter
+from ml_pipeline.models import User
 
 admin_router = APIRouter(prefix="/admin", tags=["Admin Operations"])
 

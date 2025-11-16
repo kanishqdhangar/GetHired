@@ -8,10 +8,10 @@ from sklearn.metrics.pairwise import cosine_similarity
 from dotenv import load_dotenv
 import google.generativeai as genai
 from sqlalchemy.orm import Session
-from ..ml_pipeline.models import Internship, UserProfile
-from ..ml_pipeline.db_connector import get_db
-from ..ml_pipeline.embeddings import create_embedding_from_text, get_last_embedding_provider
-from ..ml_pipeline.pdf_reader import extract_text_from_pdf
+from ml_pipeline.db_connector import get_db
+from ml_pipeline.models import Internship, UserProfile
+from ml_pipeline.embeddings import create_embedding_from_text, get_last_embedding_provider
+from ml_pipeline.pdf_reader import extract_text_from_pdf
 from typing import List, Dict, Any
 
 load_dotenv()

@@ -6,11 +6,11 @@ from datetime import timedelta
 from typing import Annotated
 
 # --- CONFIRMED CORRECT IMPORTS BASED ON YOUR STRUCTURE ---
-from ..ml_pipeline.db_connector import get_db
-from ..ml_pipeline.models import User
+from ml_pipeline.db_connector import get_db
+from ml_pipeline.models import User
 # The following imports are relative to the 'backend' package and should be correct
-from ..schemas.auth import UserCreate, Token, UserRead
-from ..security.auth import (
+from schemas.auth import UserCreate, Token, UserRead
+from security.auth import (
     get_password_hash, 
     verify_password, 
     create_access_token, 

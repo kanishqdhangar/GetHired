@@ -2,12 +2,12 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware 
 # Import files based on your confirmed structure
-from backend.ml_pipeline.db_connector import engine
-from backend.ml_pipeline.models import Base, init_db 
-from backend.routers.recommend_router import router as recommend_router
-from backend.routers.auth_router import auth_router
-from backend.routers.recruiter_router import recruiter_router # Updated
-from backend.routers.student_router import student_router # <-- NEW IMPORT
+from .ml_pipeline.db_connector import engine
+from .ml_pipeline.models import Base, init_db 
+from .routers.recommend_router import router as recommend_router
+from .routers.auth_router import auth_router
+from .routers.recruiter_router import recruiter_router
+from .routers.student_router import student_router 
 
 # --- 1. Lifespan Events (Database Initialization) ---
 

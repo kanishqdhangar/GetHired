@@ -4,11 +4,11 @@ from typing import List
 import os
 from fastapi.responses import FileResponse # Used for resume serving (Recruiter side)
 # Import utilities from confirmed paths
-from backend.ml_pipeline.db_connector import get_db
-from backend.security.auth import get_current_student, get_student_from_query_token
-from backend.ml_pipeline.models import User, Application
-from backend.schemas.application import ApplicationCreate, ApplicationRead
-from backend.crud.student import apply_for_job, get_applications_by_student, _update_application_resume_path 
+from ..ml_pipeline.db_connector import get_db
+from ..security.auth import get_current_student, get_student_from_query_token
+from ..ml_pipeline.models import User, Application
+from ..schemas.application import ApplicationCreate, ApplicationRead
+from ..crud.student import apply_for_job, get_applications_by_student, _update_application_resume_path 
 
 student_router = APIRouter(prefix="/student", tags=["Student Operations"])
 

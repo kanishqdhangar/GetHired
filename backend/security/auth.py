@@ -9,8 +9,8 @@ from fastapi import Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
 
 # Import the get_db dependency and User model
-from backend.ml_pipeline.db_connector import get_db
-from backend.ml_pipeline.models import User
+from ..ml_pipeline.db_connector import get_db
+from ..ml_pipeline.models import User
 
 # --- 1. JWT and Security Configuration ---
 SECRET_KEY = os.getenv("SECRET_KEY", "your-super-secret-key-please-change")

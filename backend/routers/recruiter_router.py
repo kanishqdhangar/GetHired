@@ -4,15 +4,15 @@ from typing import List
 import os
 from fastapi.responses import Response
 # Import utilities from confirmed paths
-from backend.ml_pipeline.db_connector import get_db
-from backend.security.auth import get_current_recruiter
-from backend.ml_pipeline.models import User
-from backend.schemas.job import JobCreate, JobRead, RecommendationRead
-from backend.crud.recruiter import get_jobs_by_recruiter, update_job, delete_job, update_application_status, get_applicants_for_job
-from backend.crud.job import create_job_with_embedding # For Ingestion
+from ..ml_pipeline.db_connector import get_db
+from ..security.auth import get_current_recruiter
+from ..ml_pipeline.models import User
+from ..schemas.job import JobCreate, JobRead, RecommendationRead
+from ..crud.recruiter import get_jobs_by_recruiter, update_job, delete_job, update_application_status, get_applicants_for_job
+from ..crud.job import create_job_with_embedding # For Ingestion
 from fastapi.responses import FileResponse # <-- NEW IMPORT
-from backend.crud.recruiter import get_application_by_id_and_recruiter # Need new CRUD
-from backend.schemas.application import ApplicationRead, ApplicantRead, ApplicationStatusUpdate # <-- NEW IMPORT
+from ..crud.recruiter import get_application_by_id_and_recruiter # Need new CRUD
+from ..schemas.application import ApplicationRead, ApplicantRead, ApplicationStatusUpdate # <-- NEW IMPORT
 
 recruiter_router = APIRouter(prefix="/recruiter", tags=["Recruiter Operations"])
 

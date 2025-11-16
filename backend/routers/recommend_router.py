@@ -1,7 +1,7 @@
 # routers/recommend_router.py
 from fastapi import APIRouter, UploadFile, File, Response
 import os
-from backend.agent.job_agent import recommend_jobs_from_resume
+from ..agent.job_agent import recommend_jobs_from_resume
 
 router = APIRouter()
 

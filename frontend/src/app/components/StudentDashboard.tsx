@@ -221,7 +221,7 @@ const RecommendationContent: React.FC<RecommendationContentProps> = ({ recommend
               accept=".pdf"
               required
               onChange={(e) => setFile(e.target.files ? e.target.files[0] : null)}
-              className="flex-grow p-3 border border-gray-300 rounded-lg w-full text-gray-700 bg-gray-50 hover:bg-gray-100 transition shadow-inner"
+              className="grow p-3 border border-gray-300 rounded-lg w-full text-gray-700 bg-gray-50 hover:bg-gray-100 transition shadow-inner"
             />
             
             {/* Button (Ensured it fits and has max-width on smaller screens) */}

@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 from sqlalchemy_utils import JSONType # Used to store vector embeddings (list of floats)
 from sqlalchemy import func
-from db_connector import Base, engine 
+from .db_connector import Base, engine 
 import datetime
 
 # --- Utility: Create Tables on Startup ---

@@ -38,22 +38,22 @@ def _update_application_resume_path(db: Session, app_id: int, resume_path: str):
     return None
 
 
-# --- UPDATED: apply_for_job function to return the initial application ID ---
+# --- apply_for_job function to return the initial application ID ---
 def apply_for_job(db: Session, student_id: int, job_id: int) -> Application:
     """
     Creates a new application record for a student.
     (Resume path must be added by the router after file save)
     """
     
-    # Check if job exists
+    
     if not db.query(Internship).filter(Internship.id == job_id).first():
         return None 
 
-    # Check for duplicate application
+    
     if db.query(Application).filter(Application.student_id == student_id, Application.job_id == job_id).first():
         raise ValueError("Duplicate application.")
 
-    # CRITICAL: Initialize resume_path as None/empty string
+    
     new_app = Application(
         student_id=student_id,
         job_id=job_id,
@@ -63,7 +63,7 @@ def apply_for_job(db: Session, student_id: int, job_id: int) -> Application:
     db.add(new_app)
     db.commit()
     db.refresh(new_app)
-    return new_app # Return the application object (which now has an ID)
+    return new_app 
 
 def get_applications_by_student(db: Session, student_id: int):
     results = (

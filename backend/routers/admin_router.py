@@ -2,10 +2,8 @@
 
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-# Import the Pydantic schema and database dependency
 from schemas.job import JobCreate
-from ml_pipeline.db_connector import get_db # Assuming this gets the DB session
-# Import the new service function
+from ml_pipeline.db_connector import get_db
 from crud.job import create_job_with_embedding 
 from security.auth import get_current_recruiter
 from ml_pipeline.models import User
@@ -19,7 +17,7 @@ def ingest_job(job: JobCreate, db: Session = Depends(get_db), current_recruiter:
     """
     recruiter_id = current_recruiter.id
 
-    # Call the service function to handle the business logic (embedding + saving)
+    
     db_job = create_job_with_embedding(db=db, job=job, recruiter_id=recruiter_id)
     
     return {

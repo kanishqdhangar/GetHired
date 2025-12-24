@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 
-# --- Load environment variables ---
+
 load_dotenv()
 
 def fetch_top_k_jobs(resume_embedding, top_k=5):
@@ -11,11 +11,9 @@ def fetch_top_k_jobs(resume_embedding, top_k=5):
     Returns a list of dicts.
     """
 
-    # --- Validate embedding ---
     if not resume_embedding or not isinstance(resume_embedding, (list, tuple)):
         raise ValueError("Invalid or empty embedding passed to fetch_top_k_jobs()")
 
-    # Convert list → pgvector format '[0.1, 0.2, 0.3]'
     embedding_str = "[" + ", ".join(map(str, resume_embedding)) + "]"
 
     query = """

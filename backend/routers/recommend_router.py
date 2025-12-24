@@ -13,7 +13,6 @@ async def recommend_jobs(file: UploadFile = File(...), response: Response = None
         f.write(await file.read())
     
     result = recommend_jobs_from_resume(pdf_path)
-    # Move meta info to headers and strip from body
     meta = result.pop("_meta", None)
     if response is not None and isinstance(meta, dict):
         if meta.get("embedding_provider") is not None:

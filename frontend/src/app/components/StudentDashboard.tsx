@@ -186,10 +186,6 @@ interface RecommendationContentProps {
     file: File | null;
 }
 const RecommendationContent: React.FC<RecommendationContentProps> = ({ recommendations, loading, uploadMessage, onGenerate, onApply, setFile, file }) => {
-    // ... (logic remains the same) ...
-    // Note: The structure inside RecommendationContent is very long, so I'm omitting 
-    // it here but assuming it is the code block I provided in the last turn.
-    // It is functionally complete.
     const allCourses = recommendations.reduce((acc, job) => {
         (job.recommended_courses || []).forEach(course => {
             if (!acc.includes(course)) {
@@ -270,9 +266,9 @@ const RecommendationContent: React.FC<RecommendationContentProps> = ({ recommend
               <div key={job.id} className="bg-white p-6 shadow-xl rounded-xl border border-green-300 transition duration-300 hover:shadow-2xl">
                 <div className="flex justify-between items-start flex-col sm:flex-row">
                   <div className="mb-3 sm:mb-0">
-                    <h4 className="text-xl font-bold text-green-700">{job.title}</h4>
+                    <h4 className="text-xl font-bold text-green-700">{job.job_title}</h4>
                     <p className="text-sm text-gray-500 mt-1">
-                      Fit Score: <span className="font-extrabold text-lg text-indigo-600">{(job.match_score * 100).toFixed(1)}%</span>
+                      Fit Score: <span className="font-extrabold text-lg text-indigo-600">{job.fit_score}%</span>
                     </p>
                   </div>
                   <button
@@ -362,7 +358,6 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ token, userName }) 
     const [loading, setLoading] = useState(false);
     const [uploadMessage, setUploadMessage] = useState('');
     const [resumeFile, setResumeFile] = useState<File | null>(null); 
-    // NEW STATE: Tracks the application object to show in the detail modal
     const [viewingApplication, setViewingApplication] = useState<Application | null>(null);
   
     // --- Utility Functions ---
@@ -385,10 +380,42 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ token, userName }) 
     }, [fetchApplications]);
   
     // --- Handlers ---
-    const handleGenerateRecommendations = async (file: File) => { /* ... remains the same ... */ };
+    const handleGenerateRecommendations = async (file: File) => {
+    setLoading(true);
+    setUploadMessage('Uploading resume and analyzing skills...');
+    setRecommendations([]); // Clear previous results
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/recommend`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                
+            },
+            body: formData,
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            
+            setRecommendations(data.matches || []);
+            setUploadMessage('Recommendations generated successfully!');
+        } else {
+            const errorData = await response.json();
+            setUploadMessage(`Error: ${errorData.detail || 'Failed to analyze resume'}`);
+        }
+    } catch (error) {
+        console.error("ML Recommendation Error:", error);
+        setUploadMessage('Error: Could not connect to the server.');
+    } finally {
+        setLoading(false);
+    }
+};
   
     const handleApplyAndSubmitResume = async (jobId: number, file: File) => {
-      // CRITICAL GUARD: Check if the Job ID is valid immediately
       if (typeof jobId !== 'number' || jobId <= 0) {
           alert("Application failed: Invalid Job ID detected.");
           console.error("Invalid Job ID received for application:", jobId);
@@ -422,7 +449,6 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ token, userName }) 
       setLoading(false);
     };
     
-    // NEW HANDLER: Opens the detail modal when a job title is clicked
     const handleViewApplicationDetails = (app: Application) => {
         setViewingApplication(app);
     };

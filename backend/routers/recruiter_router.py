@@ -3,20 +3,19 @@ from sqlalchemy.orm import Session
 from typing import List
 import os
 from fastapi.responses import Response
-# Import utilities from confirmed paths
 from ml_pipeline.db_connector import get_db
 from security.auth import get_current_recruiter
 from ml_pipeline.models import User
 from schemas.job import JobCreate, JobRead, RecommendationRead
 from crud.recruiter import get_jobs_by_recruiter, update_job, delete_job, update_application_status, get_applicants_for_job
-from crud.job import create_job_with_embedding # For Ingestion
-from fastapi.responses import FileResponse # <-- NEW IMPORT
-from crud.recruiter import get_application_by_id_and_recruiter # Need new CRUD
-from schemas.application import ApplicationRead, ApplicantRead, ApplicationStatusUpdate # <-- NEW IMPORT
+from crud.job import create_job_with_embedding 
+from fastapi.responses import FileResponse 
+from crud.recruiter import get_application_by_id_and_recruiter 
+from schemas.application import ApplicationRead, ApplicantRead, ApplicationStatusUpdate 
 
 recruiter_router = APIRouter(prefix="/recruiter", tags=["Recruiter Operations"])
 
-# --- NEW ENDPOINT: Secure Resume Download ---
+# --- Secure Resume Download ---
 @recruiter_router.get("/resume/{app_id}")
 def download_applicant_resume(
     app_id: int,
@@ -29,7 +28,7 @@ def download_applicant_resume(
     """
     recruiter_id = current_recruiter.id
     
-    # 1. Check ownership and retrieve application record
+    # Check ownership and retrieve application record
     app = get_application_by_id_and_recruiter(db, app_id=app_id, recruiter_id=recruiter_id)
 
     if not app:
@@ -46,10 +45,10 @@ def download_applicant_resume(
             detail="Resume file not found on server."
         )
 
-    # 2. Return the file securely
+    # Return the file securely
     return FileResponse(file_path, media_type='application/pdf', filename=os.path.basename(file_path))
 
-# --- 1. POST: Job Ingestion (New Path) ---
+# --- POST: Job Ingestion  ---
 @recruiter_router.post(
     "/jobs/ingest", 
     response_model=JobRead, 
@@ -66,12 +65,12 @@ def ingest_job(
     """
     recruiter_id = current_recruiter.id
     
-    # Use the existing CRUD function
+    
     db_job = create_job_with_embedding(db=db, job=job, recruiter_id=recruiter_id)
     
     return db_job
 
-# --- 2. GET: View Posted Jobs (Filtering) ---
+# --- GET: View Posted Jobs (Filtering) ---
 @recruiter_router.get(
     "/jobs", 
     response_model=List[JobRead], 
@@ -87,7 +86,7 @@ def read_posted_jobs(
     jobs = get_jobs_by_recruiter(db, recruiter_id=current_recruiter.id)
     return jobs
 
-# --- 3. PUT: Edit Existing Job ---
+# --- PUT: Edit Existing Job ---
 @recruiter_router.put("/jobs/{job_id}", response_model=JobRead)
 def edit_job(
     job_id: int,
@@ -111,7 +110,7 @@ def edit_job(
         )
     return updated_job
 
-# --- 4. DELETE: Delete Job ---
+# --- DELETE: Delete Job ---
 @recruiter_router.delete("/jobs/{job_id}", status_code=status.HTTP_204_NO_CONTENT)
 def remove_job(
     job_id: int,
@@ -127,10 +126,9 @@ def remove_job(
             status_code=status.HTTP_404_NOT_FOUND, 
             detail="Job not found or unauthorized access."
         )
-    # HTTP 204 means successful deletion with no body content
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
-# --- NEW ENDPOINT: Update Application Status ---
+# --- PUT: Update Application Status ---
 @recruiter_router.put(
     "/applications/{app_id}/status",
     response_model=ApplicationRead,
@@ -156,7 +154,6 @@ def update_applicant_status(
             new_status=new_status
         )
     except ValueError as e:
-        # Catch invalid status error from CRUD function
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
@@ -170,7 +167,7 @@ def update_applicant_status(
 
 @recruiter_router.get(
     "/jobs/{job_id}/applicants",
-    response_model=List[ApplicantRead], # Uses the ApplicantRead schema
+    response_model=List[ApplicantRead], 
     status_code=status.HTTP_200_OK
 )
 def read_job_applicants(
@@ -191,7 +188,7 @@ def read_job_applicants(
             detail="Job not found or not owned by this recruiter."
         )
 
-    # Map the Application objects to the ApplicantRead schema, joining with User data
+    
     applicant_data = []
     for app in applications:
         applicant_data.append(ApplicantRead(
@@ -200,7 +197,6 @@ def read_job_applicants(
             student_id=app.student_id,
             status=app.status,
             applied_date=app.applied_date,
-            # CRITICAL: Accesses the student's email via the SQLAlchemy relationship
             student_email=app.student.email 
         ))
 

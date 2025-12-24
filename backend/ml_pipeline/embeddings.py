@@ -5,18 +5,18 @@ from openai import OpenAI
 import google.generativeai as genai
 from sentence_transformers import SentenceTransformer
 
-# ✅ Handle optional Z.AI import gracefully
+
 try:
     import zai
 except ImportError:
     zai = None
 
-# --- Load API keys ---
+
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 ZAI_API_KEY = os.getenv("ZAI_API_KEY")
 
-# --- Initialize clients ---
+
 openai_client = OpenAI(api_key=OPENAI_API_KEY) if OPENAI_API_KEY else None
 
 if GOOGLE_API_KEY:
@@ -24,7 +24,7 @@ if GOOGLE_API_KEY:
 
 zai_client = zai.Client(api_key=ZAI_API_KEY) if (ZAI_API_KEY and zai) else None
 
-# --- Local model (offline fallback) ---
+
 local_model = SentenceTransformer("all-MiniLM-L6-v2")
 
 LAST_EMBEDDING_PROVIDER = None
@@ -43,7 +43,7 @@ def create_embedding_from_text(text: str) -> list:
 
     text = text.strip()
 
-    # --- 1️⃣ Try OpenAI ---
+    # --- Try OpenAI ---
     if openai_client:
         try:
             response = openai_client.embeddings.create(
@@ -57,7 +57,7 @@ def create_embedding_from_text(text: str) -> list:
         except Exception as e:
             print(f"⚠️ OpenAI embedding failed: {e}")
 
-    # --- 2️⃣ Try Gemini ---
+    # --- Try Gemini ---
     if GOOGLE_API_KEY:
         try:
             response = genai.embed_content(
@@ -72,7 +72,7 @@ def create_embedding_from_text(text: str) -> list:
         except Exception as e:
             print(f"⚠️ Gemini embedding failed: {e}")
 
-    # --- 3️⃣ Try Z.AI ---
+    # --- Try Z.AI ---
     if zai_client:
         try:
             response = zai_client.embeddings.create(model="embedding-2", input=text)
@@ -88,7 +88,7 @@ def create_embedding_from_text(text: str) -> list:
         except Exception as e:
             print(f"⚠️ Z.AI embedding failed: {e}")
 
-    # --- 4️⃣ Local fallback ---
+    # --- Local fallback ---
     try:
         embedding = local_model.encode(text).tolist()
         LAST_EMBEDDING_PROVIDER = "local"
@@ -97,7 +97,7 @@ def create_embedding_from_text(text: str) -> list:
     except Exception as e:
         print(f"⚠️ Local embedding failed: {e}")
 
-    # --- 5️⃣ Emergency fallback ---
+    # --- Emergency fallback ---
     print("⚠️ All embedding providers failed. Returning zero vector.")
     LAST_EMBEDDING_PROVIDER = "fallback"
     return np.zeros(384).tolist()
@@ -117,7 +117,6 @@ def get_last_embedding_provider() -> str:
 try:
     MODEL = SentenceTransformer('all-MiniLM-L6-v2')
 except Exception as e:
-    # Fallback/error handling for model loading
     print(f"ERROR: Could not load SentenceTransformer model. Recommendations will fail. {e}")
     MODEL = None
 
@@ -127,11 +126,8 @@ def create_embedding_from_text(text: str) -> list:
     Generates a vector embedding from text using the Sentence Transformer model.
     """
     if MODEL is None:
-        # Return a zero vector or raise an error if the model failed to load
-        # We return a placeholder vector of dimension 384 (standard for MiniLM-L6-v2)
         print("WARNING: ML model not loaded, returning placeholder vector.")
         return list(np.zeros(384)) 
         
-    # Encode the text and convert the resulting NumPy array to a standard Python list
     embedding_array = MODEL.encode(text)
     return embedding_array.tolist()

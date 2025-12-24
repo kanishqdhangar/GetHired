@@ -1,25 +1,22 @@
 import os
 from datetime import datetime, timedelta, timezone
 from typing import Optional
-
 from passlib.context import CryptContext
 from jose import JWTError, jwt
 from fastapi.security import OAuth2PasswordBearer
 from fastapi import Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
+from ml_pipeline.db_connector import get_db
+from ml_pipeline.models import User
 
-# Import the get_db dependency and User model
-from ..ml_pipeline.db_connector import get_db
-from ..ml_pipeline.models import User
-
-# --- 1. JWT and Security Configuration ---
+# --- JWT and Security Configuration ---
 SECRET_KEY = os.getenv("SECRET_KEY", "your-super-secret-key-please-change")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
 
-# --- 2. Password Hashing Utilities ---
+# --- Password Hashing Utilities ---
 
 def _get_pwd_context():
     """Create CryptContext with bcrypt safely (no unsupported args)."""
@@ -53,7 +50,7 @@ def get_password_hash(password: str) -> str:
     safe_password = _truncate_password(password)
     return pwd_context.hash(safe_password)
 
-# --- 3. JWT Token Utilities ---
+# --- JWT Token Utilities ---
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
     """Generate a JWT access token."""
@@ -76,7 +73,7 @@ def decode_access_token(token: str) -> Optional[dict]:
     except JWTError:
         return None
 
-# --- 4. FastAPI Dependencies (Authentication and Authorization) ---
+# --- FastAPI Dependencies (Authentication and Authorization) ---
 
 CREDENTIALS_EXCEPTION = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,
@@ -114,7 +111,7 @@ def get_current_student(current_user: User = Depends(get_current_user)):
     return current_user
 
 def get_student_from_query_token(
-    token: str = Query(..., alias="token"), # Extracts token from ?token=...
+    token: str = Query(..., alias="token"), 
     db: Session = Depends(get_db),
 ):
     """
@@ -126,12 +123,10 @@ def get_student_from_query_token(
     if token_data is None:
         raise CREDENTIALS_EXCEPTION
 
-    # Retrieve user from DB
+    
     user = db.query(User).filter(User.id == token_data["user_id"]).first()
     
-    # Check if user exists and is a student (Authorization)
     if user is None or user.role != 'student':
-        # Raises 403 if user exists but is not the correct role
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Student access required.")
         
     return user

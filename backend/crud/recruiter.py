@@ -32,16 +32,12 @@ def update_job(db: Session, job_id: int, job_update: JobCreate, recruiter_id: in
     if not db_job:
         return None 
 
-    # 1. Prepare Text
+    
     job_text = job_update.title + " " + job_update.description
     
-    # 2. CRITICAL FIX: Call the simple embedding function directly
-    # This function should only take text and return the vector array (list of floats).
-    # If the function is not yet defined to do this, it must be created.
-    # For now, we assume this function exists and works:
     new_embedding = create_embedding_from_text(job_text) 
     
-    # 3. Update fields
+    
     for key, value in job_update.model_dump().items():
         setattr(db_job, key, value)
     
@@ -69,7 +65,6 @@ def delete_job(db: Session, job_id: int, recruiter_id: int):
         return True
     return False
 # View Applications
-# backend/crud/recruiter.py (New function for secure serving)
 
 def get_application_by_id_and_recruiter(db: Session, app_id: int, recruiter_id: int):
     """
@@ -94,8 +89,6 @@ def update_application_status(
     
     Returns the updated Application object or None if not found/unauthorized.
     """
-    # 1. Check ownership and retrieve application record
-    # We use a join similar to get_application_by_id_and_recruiter 
     app_to_update = db.query(Application).join(Internship).filter(
         Application.id == app_id,
         Internship.recruiter_id == recruiter_id
@@ -104,36 +97,32 @@ def update_application_status(
     if not app_to_update:
         return None
 
-    # 2. Basic status validation (optional, but good practice)
     ALLOWED_STATUSES = ["Applied", "Interview", "Accepted", "Rejected"]
     if new_status not in ALLOWED_STATUSES:
         raise ValueError(f"Invalid status: Must be one of {ALLOWED_STATUSES}")
 
-    # 3. Apply the update
     app_to_update.status = new_status
     
     db.commit()
     db.refresh(app_to_update)
     return app_to_update
 
-# --- NEW FUNCTION: Fetch Applicants (Required by Router) ---
+# --- Fetch Applicants ---
 
 def get_applicants_for_job(db: Session, job_id: int, recruiter_id: int) -> List[Application] | None:
     """
     Retrieves all applications for a given job ID, ensuring the recruiter owns the job.
     """
-    # 1. Verify job existence AND ownership using a simple query on Internship
+    
     job = db.query(Internship).filter(
         Internship.id == job_id,
         Internship.recruiter_id == recruiter_id
     ).first()
 
     if not job:
-        # Returns None if job doesn't exist or recruiter doesn't own it (triggers 404)
+        
         return None 
 
-    # 2. Fetch all applications related to this job ID
-    # This query automatically joins Application -> User via the relationship defined in models.py
     applicants = db.query(Application).filter(Application.job_id == job_id).all()
     
     return applicants

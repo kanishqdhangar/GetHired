@@ -12,7 +12,7 @@ from routers.auth_router import auth_router
 from routers.recruiter_router import recruiter_router
 from routers.student_router import student_router 
 
-# --- 1. Lifespan Events (Database Initialization) ---
+# --- Lifespan Events (Database Initialization) ---
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -26,7 +26,7 @@ async def lifespan(app: FastAPI):
     
     print("Application shutdown.")
 
-# --- 2. FastAPI Application Initialization ---
+# --- FastAPI Application Initialization ---
 
 app = FastAPI(
     title="GetHired Internship Recommendation API",
@@ -35,10 +35,10 @@ app = FastAPI(
     lifespan=lifespan 
 )
 
-# --- 3. CORS MIDDLEWARE SETUP (CRITICAL FIX) ---
+# --- CORS MIDDLEWARE SETUP  ---
 origins = [
     "http://localhost",
-    "http://localhost:3000", # Allow the Next.js development server
+    "http://localhost:3000",
     "http://127.0.0.1:3000",
 ]
 
@@ -49,7 +49,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-# --- 4. Register Routers ---
+# --- Register Routers ---
 
 # Core Recommendation Router
 app.include_router(recommend_router)
@@ -57,10 +57,9 @@ app.include_router(recommend_router)
 # Authentication Router
 app.include_router(auth_router)
 
-# Recruiter-specific Router (Includes Ingestion, View, Edit, Delete)
+# Recruiter-specific Router 
 app.include_router(recruiter_router)
 
-# Student-specific Router (Applications) <-- NEW REGISTRATION
+# Student-specific Router 
 app.include_router(student_router)
 
-# NOTE: The redundant admin_router has been removed.

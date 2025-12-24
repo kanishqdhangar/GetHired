@@ -4,11 +4,8 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from datetime import timedelta
 from typing import Annotated
-
-# --- CONFIRMED CORRECT IMPORTS BASED ON YOUR STRUCTURE ---
 from ml_pipeline.db_connector import get_db
 from ml_pipeline.models import User
-# The following imports are relative to the 'backend' package and should be correct
 from schemas.auth import UserCreate, Token, UserRead
 from security.auth import (
     get_password_hash, 
@@ -19,14 +16,13 @@ from security.auth import (
 
 auth_router = APIRouter(prefix="/auth", tags=["Authentication"])
 
-# --- 1. User Registration ---
+# --- User Registration ---
 
 @auth_router.post("/register", response_model=UserRead, status_code=status.HTTP_201_CREATED)
 def register_user(user_in: UserCreate, db: Session = Depends(get_db)):
     """
     Register a new user (Student or Recruiter).
     """
-    # Check if the user already exists
     existing_user = db.query(User).filter(User.email == user_in.email).first()
     if existing_user:
         raise HTTPException(
@@ -34,17 +30,14 @@ def register_user(user_in: UserCreate, db: Session = Depends(get_db)):
             detail="Email already registered."
         )
 
-    # Validate role input
     if user_in.role not in ['student', 'recruiter']:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Invalid role. Must be 'student' or 'recruiter'."
         )
 
-    # Hash the password for secure storage
     hashed_password = get_password_hash(user_in.password)
 
-    # Create the new user object
     new_user = User(
         email=user_in.email,
         hashed_password=hashed_password,
@@ -64,10 +57,8 @@ def register_user(user_in: UserCreate, db: Session = Depends(get_db)):
     
     return new_user
 
-# --- 2. Login and Token Generation ---
+# --- Login and Token Generation ---
 
-# Annotated type is used for Pydantic/FastAPI request forms
-# OAuth2PasswordRequestForm expects 'username' (we use email) and 'password'
 @auth_router.post("/token", response_model=Token)
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()], 
@@ -77,7 +68,7 @@ async def login_for_access_token(
     Authenticate user and return a JWT access token.
     'username' maps to 'email' in our implementation.
     """
-    # 1. Find the user by email (username)
+
     user = db.query(User).filter(User.email == form_data.username).first()
     
     if not user:
@@ -87,7 +78,7 @@ async def login_for_access_token(
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    # 2. Verify the password
+    #  Verify the password
     if not verify_password(form_data.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -95,7 +86,7 @@ async def login_for_access_token(
             headers={"WWW-Authenticate": "Bearer"},
         )
     
-    # 3. Create the JWT token
+    #  Create the JWT token
     access_token_expires = timedelta(minutes=30)
     
     # The token payload includes the user's ID ('sub') and role
@@ -108,7 +99,7 @@ async def login_for_access_token(
     return {"access_token": access_token, "token_type": "bearer", "user_role": user.role, "user_name": user.email
             }
 
-# --- 3. Profile Endpoint (Testing Authorization) ---
+# --- Profile Endpoint (Testing Authorization) ---
 
 @auth_router.get("/me", response_model=UserRead)
 def read_users_me(current_user: User = Depends(get_current_user)):

@@ -35,7 +35,7 @@ def extract_skills(resume_text: str) -> list:
 
 # --- SCORING FUNCTION (Assuming Stable) ---
 def fetch_and_score_jobs(db: Session, user_vector: list) -> List[Dict[str, Any]]:
-    # ... (content remains the same as provided, ensuring ID is retrieved from DB) ...
+    
     jobs = db.query(
         Internship.id, 
         Internship.title,
@@ -91,7 +91,7 @@ def fetch_and_score_jobs(db: Session, user_vector: list) -> List[Dict[str, Any]]
     return scored_results[:5]
 
 
-# --- Main Recommendation Function (The one the router calls) ---
+# --- Main Recommendation Function ---
 
 def recommend_jobs_from_resume(pdf_path: str):
     db = next(get_db()) 
@@ -103,9 +103,9 @@ def recommend_jobs_from_resume(pdf_path: str):
         raise ValueError("Empty or unreadable resume text from PDF.")
     print(" Resume text extracted.")
 
-    # --- LLM Parsing and Embedding logic (as defined in your original file) ---
+    # --- LLM Parsing and Embedding logic ---
     model = genai.GenerativeModel("gemini-2.5-flash")
-    # --- Skill extraction simulation (to run the rest of the code) ---
+    # --- Skill extraction simulation ---
     skills = extract_skills(resume_text)
     if not skills: skills = ["Data Analysis", "Python"]
     
@@ -114,7 +114,7 @@ def recommend_jobs_from_resume(pdf_path: str):
         os.remove(pdf_path) 
         raise ValueError("Embedding could not be created.")
 
-    # --- Step 4: Fetch top job matches using Python scoring ---
+    # --- Fetch top job matches using Python scoring ---
     try:
         matched_jobs = fetch_and_score_jobs(db, resume_embedding)
     except Exception as e:
@@ -129,9 +129,9 @@ def recommend_jobs_from_resume(pdf_path: str):
 
     print(f" Found {len(matched_jobs)} matching jobs.")
 
-    # --- Step 5: Skill gap reasoning ---
+    # --- Skill gap reasoning ---
     
-    # 1. Prepare input data for the LLM (Must include ID)
+    
     reasoning_data = [{
         "id": j['id'], 
         "job_title": j['title'],
@@ -140,7 +140,7 @@ def recommend_jobs_from_resume(pdf_path: str):
         "description": j['description']
     } for j in matched_jobs]
     
-    # 2. Create map of job titles to original DB job data (for ID lookup later)
+    
     job_map = {job['job_title']: job for job in matched_jobs}
     
     reasoning_prompt = f"""
@@ -183,19 +183,19 @@ def recommend_jobs_from_resume(pdf_path: str):
         structured_results = matched_jobs 
 
 
-    # --- Step 6: Final structured output (GUARANTEE ID MAPPING) ---
+    # --- Final structured output ---
     
     final_output = []
     for result_item in structured_results:
         title = result_item.get('job_title')
         
-        # Look up the original job data (which has the real DB ID) using the job_title
+        
         original_job = job_map.get(title)
         
-        # Inject the true database ID if found, otherwise use the LLM's ID or assign default
+        
         final_output.append({
             **result_item,
-            # Inject the true DB ID if we successfully found the job in the map
+            
             "id": original_job['id'] if original_job else result_item.get('id', 0)
         }) 
 

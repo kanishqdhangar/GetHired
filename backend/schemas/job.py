@@ -9,13 +9,13 @@ class JobBase(BaseModel):
     description: str = Field(..., example="Develop and deploy ML models for recommendation engine.")
     required_skills: List[str] = Field(default=[], example=["Python", "TensorFlow", "SQL", "Git"])
 
-# --- 1. Schema for Job Creation (Input) ---
+# --- Schema for Job Creation (Input) ---
 class JobCreate(JobBase):
     """Schema for creating a new job (input)."""
     # Inherits title, description, and required_skills from JobBase
     pass
 
-# --- 2. Schema for Job Reading (Output) ---
+# --- Schema for Job Reading (Output) ---
 class JobRead(JobBase):
     """
     Schema for reading job data (output). 
@@ -28,7 +28,7 @@ class JobRead(JobBase):
     class Config:
         from_attributes = True 
 
-# --- 3. Schema for Recommendation Output ---
+# --- Schema for Recommendation Output ---
 class RecommendationRead(JobRead):
     """
     Schema for displaying a job recommendation, inheriting JobRead 

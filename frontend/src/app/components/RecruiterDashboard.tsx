@@ -98,7 +98,6 @@ interface JobPostFormProps {
     onJobPosted: () => void;
 }
 const JobPostForm: React.FC<JobPostFormProps> = ({ token, onJobPosted }) => {
-    /* ... form implementation remains the same ... */
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [skills, setSkills] = useState('');

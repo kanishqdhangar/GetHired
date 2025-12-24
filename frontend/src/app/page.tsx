@@ -149,7 +149,7 @@ const App: React.FC = () => {
     if (showAuthForm) {
       return (
         <div className="min-h-screen flex flex-col justify-center items-center bg-linear-to-br from-indigo-50 via-white to-teal-50 transition-all duration-500 p-4">
-          {/* Note: AuthForm handles its own layout, but we wrap it for a clean background effect */}
+          
           <AuthForm
             isRegister={isRegister}
             onSubmit={handleAuthSubmit}
@@ -180,7 +180,7 @@ const App: React.FC = () => {
       </div>
 
       <main className="flex-1 px-4 sm:px-6 lg:px-8 py-8 max-w-7xl mx-auto w-full">
-        {/* Added dynamic key for smooth transition */}
+        
         <div key={userRole} className="w-full">
           {userRole === 'student' && (
             <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-6 md:p-8 border border-gray-100 transition-all duration-500">

@@ -7,7 +7,7 @@
 - **Frontend:** Next.js (App Router, Tailwind CSS, Lucide-React)
 - **Backend:** FastAPI (Asynchronous Python framework)
 - **Database:** PostgreSQL
-- **Machine Learning:** Scikit-learn (TF-IDF Vectorizer & Cosine Similarity)
+- **Machine Learning:** Sentence Transformers, NumPy, Cosine Similarity, LLMs
 - **State Management:** React Context API / Hooks
 
 ## 📂 Project Structure
@@ -66,12 +66,30 @@ Run the development server:
 Navigate to http://localhost:3000 to view the app.
 
 ## 🧠 Machine Learning Overview
-The recommendation engine works by:
-1. Preprocessing: Cleaning student profiles and internship descriptions.
-2. Vectorization: Converting text into numerical representations using TF-IDF.
-3. Similarity: Computing Cosine Similarity to find the closest match between the user's vector and available job vectors.
 
+The recommendation engine is built using a **semantic, embedding-based approach** combined with **LLM-powered insights** to deliver accurate, explainable, and production-ready job recommendations.
 
+1. **Resume Parsing & Skill Extraction**  
+   - Resume text is extracted from PDF files using **PyPDF2**.  
+   - A **hybrid LLM + Regex-based skill extraction pipeline** ensures reliable identification of candidate skills across diverse resume formats.
+
+2. **Semantic Embeddings**  
+   - Resume content and job descriptions are converted into dense vector embeddings using  
+     **SentenceTransformer (`all-MiniLM-L6-v2`)**, enabling meaning-based matching beyond keywords.
+
+3. **Storage & Similarity Matching**  
+   - Job metadata and precomputed embeddings are stored in **PostgreSQL**.  
+   - **NumPy** and **Cosine Similarity** are used to compute semantic relevance and rank internships effectively.
+
+4. **LLM-Driven Insights**  
+   - An LLM (**Gemini 2.5 Flash**) is used to generate:
+     - Skill gap analysis between candidate profiles and job requirements  
+     - Personalized learning and course recommendations  
+   - This enhances transparency and helps users upskill strategically.
+
+5. **API Integration & Robustness**  
+   - The complete ML pipeline is exposed via **FastAPI** for seamless frontend integration.  
+   - Comprehensive **error handling, validation, and cleanup** ensure system stability and production readiness.
 
 ## 🤝 Contributing
 1. Fork the Project.

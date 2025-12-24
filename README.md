@@ -1,8 +1,8 @@
-# GetHired 🚀
+# GetHired 
 
 **GetHired** is an AI-powered recruitment platform designed to connect students with the most relevant internship opportunities. By utilizing a **FastAPI** backend and a **Next.js** frontend, the application provides a high-performance, real-time recommendation system based on a student’s unique skill profile and career goals.
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Frontend:** Next.js (App Router, Tailwind CSS, Lucide-React)
 - **Backend:** FastAPI (Asynchronous Python framework)
@@ -10,7 +10,7 @@
 - **Machine Learning:** Sentence Transformers, NumPy, Cosine Similarity, LLMs
 - **State Management:** React Context API / Hooks
 
-## 📂 Project Structure
+## Project Structure
 
 GetHired/
 ├── client/              # Next.js frontend application
@@ -25,14 +25,14 @@ GetHired/
 ├── requirements.txt     # Python dependencies
 └── package.json         # Frontend dependencies
 
-## ✨ Key Features
+## Key Features
 
 - **Personalized Recommendations:** An ML-driven engine that ranks jobs based on text similarity between user resumes and job descriptions.
 - **Unified Dashboard:** Aggregated internship listings from multiple sources in a single, responsive view.
 - **Async Processing:** FastAPI ensures that heavy ML similarity calculations don't block the user experience.
 - **Modern UI/UX:** A clean, dark-themed interface built with Tailwind CSS for rapid job discovery.
 
-## 🚀 Getting Started
+## Getting Started
 
 ### 1. Prerequisites
 - Python 3.10+
@@ -65,7 +65,7 @@ Run the development server:
 
 Navigate to http://localhost:3000 to view the app.
 
-## 🧠 Machine Learning Overview
+## Machine Learning Overview
 
 The recommendation engine is built using a **semantic, embedding-based approach** combined with **LLM-powered insights** to deliver accurate, explainable, and production-ready job recommendations.
 
@@ -91,7 +91,7 @@ The recommendation engine is built using a **semantic, embedding-based approach*
    - The complete ML pipeline is exposed via **FastAPI** for seamless frontend integration.  
    - Comprehensive **error handling, validation, and cleanup** ensure system stability and production readiness.
 
-## 🤝 Contributing
+## Contributing
 1. Fork the Project.
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`).
 3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`).

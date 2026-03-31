@@ -99,4 +99,4 @@ The recommendation engine is built using a **semantic, embedding-based approach*
 5. Open a Pull Request.
 
 ---
-**Developed by [Kanishq Dhangar](https://github.com/kanishqdhangar) [Khushi Kumari](https://github.com/Khushi-Kumari947)**
+**Developed by [Khushi Kumari](https://github.com/Khushi-Kumari947) [Kanishq Dhangar](https://github.com/kanishqdhangar) **
